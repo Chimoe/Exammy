@@ -8,5 +8,5 @@ Advanced anti-cheat tools
 # Contact Us
 suzihitaki@gmail.com
 
-### LICENSING
+### LICENSE
 MIT License
