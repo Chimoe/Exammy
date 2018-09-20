@@ -2,7 +2,7 @@
 
 # Key Features
 Open-source, free to use
-Go/Python
+Golang
 Advanced anti-cheat tools
 
 # Contact Us
