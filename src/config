@@ -1,0 +1,1 @@
+var dataSourceName = "user:password@tcp(host:port)/dbname"
