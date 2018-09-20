@@ -16,6 +16,10 @@ type Student struct {
 	Password  string
 }
 
+/*  a login API
+accept a JSON containing student's rcs id and password
+return plain text indicating if the id and password are correct
+*/
 func login(w http.ResponseWriter, r *http.Request) {
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", http.StatusBadRequest)
@@ -34,8 +38,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := sql.Open("mysql",
-		dataSourceName)
+	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
