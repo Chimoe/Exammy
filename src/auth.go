@@ -2,23 +2,64 @@ package main
 
 import (
 	"fmt"
+	"github.com/satori/go.uuid"
+	"io/ioutil"
 	"net/http"
 	"time"
 )
 
-func set_cookie(w http.ResponseWriter, r *http.Request) {
-	expiration := time.Now().Add(time.Hour)
-	cookie := http.Cookie{Name: "username", Value: "asdasdasd", Expires: expiration}
-	http.SetCookie(w, &cookie)
+var cookies map[string]string
+
+/* a helper function
+print all username and uuid stored in cookies
+*/
+func helper(w http.ResponseWriter, r *http.Request) {
+	for username := range cookies {
+		fmt.Fprint(w, "username: ", username, " ", "uuid: ", cookies[username], "\n")
+	}
 }
 
+/*
+accept a string containing username
+create a uuid pairing with the input username and store them into global map cookies
+*/
+func set_cookie(w http.ResponseWriter, r *http.Request) {
+	if cookies == nil {
+		cookies = make(map[string]string)
+	}
+	username, _ := ioutil.ReadAll(r.Body)
+	expiration := time.Now().Add(time.Hour)
+	u1 := uuid.Must(uuid.NewV4()).String()
+	nameCookie := http.Cookie{Name: "username", Value: string(username)}
+	cookie := http.Cookie{Name: string(username), Value: u1, Expires: expiration}
+	cookies[cookie.Name] = cookie.Value
+	http.SetCookie(w, &nameCookie)
+	http.SetCookie(w, &cookie)
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "OK")
+}
+
+/*
+accept two cookies
+nameCookie: the first one has Name: "username" and Value: string(username)
+Cookie: the second one has Name: string(username) and Value: uuid
+then check if the cookie we get has the valid uuid
+*/
 func get_cookie(w http.ResponseWriter, r *http.Request) {
-	cookie, _ := r.Cookie("username")
-	if cookie == nil {
+	nameCookie, _ := r.Cookie("username")
+	if nameCookie == nil {
 		fmt.Fprint(w, "NM$L")
 		return
+	} else {
+		cookie, _ := r.Cookie(nameCookie.Value)
+		if cookie.Value != cookies[cookie.Name] {
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprint(w, "INVALID COOKIE")
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "OK")
 	}
-	fmt.Fprint(w, cookie)
 }
 
 func get_students(w http.ResponseWriter, r *http.Request) {

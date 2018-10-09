@@ -71,10 +71,15 @@ func login(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "OK")
 }
 
+/*  a register API
+accept a JSON containing student's rcs id, first name, last name and password
+create a new student account and insert it into database
+return plain text indicating if the account are registered correctly
+*/
 func register(w http.ResponseWriter, r *http.Request) {
 	s := Student{}
 	if r.Body == nil {
-		http.Error(w, "Please send a request body", 400)
+		http.Error(w, "Please send a request body", http.StatusBadRequest)
 		return
 	}
 	err := json.NewDecoder(r.Body).Decode(&s)
@@ -82,14 +87,46 @@ func register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// pwd, _ := bcrypt.GenerateFromPassword([]byte(s.Password), bcrypt.DefaultCost)
-	// s.Password = string(pwd)
-	w.Header().Set("Content-Type", "application/json")
-	js, err := json.Marshal(s)
+	pwd, err := bcrypt.GenerateFromPassword([]byte(s.Password), bcrypt.DefaultCost)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	s.Password = string(pwd)
+	db, err := sql.Open("mysql", dataSourceName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("INSERT student SET rcs_id = ?, first_name = ?, last_name = ?, password = ?")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer stmt.Close()
+
+	res, err := stmt.Exec(s.RcsID, s.FirstName, s.LastName, s.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	LastInsertId, err := res.LastInsertId()
+	if err == nil {
+		fmt.Println("LastInsertId:", LastInsertId)
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write(js)
+	fmt.Fprint(w, "OK")
+	/*
+		w.Header().Set("Content-Type", "application/json")
+		js, err := json.Marshal(s)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Write(js)
+	*/
 }

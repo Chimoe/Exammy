@@ -11,6 +11,7 @@ func main() {
 	http.HandleFunc("/students", get_students)
 	http.HandleFunc("/reg", register)
 	http.HandleFunc("/login", login)
+	http.HandleFunc("/check", helper)
 	err := http.ListenAndServe(":9090", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
