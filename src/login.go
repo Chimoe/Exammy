@@ -56,7 +56,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	stmt.QueryRow(s.RcsID).Scan(&hashedPassword)
 
 	if len(hashedPassword) == 0 {
-		w.WriteHeader(http.StatusUnauthorized)
+		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "WRONG RCS ID")
 		return
 	}

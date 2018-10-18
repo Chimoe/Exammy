@@ -8,6 +8,7 @@ import (
 )
 
 type Course struct {
+	ID      string
 	Subject string
 	Number  string
 	Name    string
@@ -15,7 +16,6 @@ type Course struct {
 
 func get_student_courses(w http.ResponseWriter, r *http.Request) {
 	if get_cookie(w, r) {
-		// fmt.Fprint(w, "OK")
 		nameCookie, _ := r.Cookie("username")
 		username := nameCookie.Value
 
@@ -26,7 +26,7 @@ func get_student_courses(w http.ResponseWriter, r *http.Request) {
 		}
 		defer db.Close()
 
-		stmt, err := db.Prepare(`select c.subject, c.number, c.name
+		stmt, err := db.Prepare(`select c.course_id, c.subject, c.number, c.name
 		from student_course sc join student s on s.student_id = sc.student_id
 		join course c on c.course_id = sc.course_id
 		where s.rcs_id = ?`)
@@ -42,7 +42,7 @@ func get_student_courses(w http.ResponseWriter, r *http.Request) {
 		var courses []Course
 		for rows.Next() {
 			var c Course
-			rows.Scan(&c.Subject, &c.Number, &c.Name)
+			rows.Scan(&c.ID, &c.Subject, &c.Number, &c.Name)
 			courses = append(courses, c)
 		}
 
