@@ -12,11 +12,41 @@ body, html {height: 100%}
     min-height: 100%;
     background-position: center;
     background-size: cover;
+}.footer {
+  overflow:hidden;
+  background: orange;
 }
+
 </style>
 <body>
-
 <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+  <div class="w3-display-topright w3-padding-32 w3-padding-large">
+    <button class="w3-button w3-lightgreen w3-large" onclick="document.getElementById('loginbox').style.display='block'" style = "width:auto;">Login</button>
+  </div>
+  <div id = "loginbox" class="w3-modal">
+    <div class = "w3-modal-content w3-card-4 w3-animate-zoom w3-text-black" style="max-width:400px">
+      <div class = "w3-center"><br>
+        <span onclick="document.getElementById('loginbox').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+        <img src="images/webcam.png" alt="Avatar" style="width:30%" class="w3-circle w3-margin-top">
+      </div>
+
+      <form class="w3-container" method = "post" action = "/login" >
+        <div class="w3-section">
+          <label><b>Username</b></label>
+          <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter RcsID" name="RcsID" required>
+          <label><b>Password</b></label>
+          <input class="w3-input w3-border" type="password" placeholder="Enter Password" name="Password" required>
+          <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button>
+          <input class="w3-check w3-margin-top" type="checkbox" checked="checked"> Remember me
+        </div>
+      </form>
+
+      <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+        <button onclick="document.getElementById('loginbox').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>
+
+      </div>
+    </div>
+  </div>
   <div class="w3-display-topleft w3-padding-large w3-xxxlarge  w3-text-opacity">
     Exammy
   </div>
@@ -24,10 +54,13 @@ body, html {height: 100%}
     <h1 class="w3-jumbo w3-Brown w3-animate-top w3-panel w3-black" style= "text-shadow:1px 1px 0 #444">COMING SOON</h1>
     <hr class="w3-border-aqua" style="margin:auto;width:40%">
   </div>
-  <div class="w3-display-bottomleft w3-padding-large">
-    Exammy group
+  <div class="w3-display-bottomleft w3-padding-large w3-text-deep-purple">
+    An <a href=https://sites.google.com/site/rpisdd/system/app/pages/sitemap/hierarchy><strong>CSCI 4380</strong></a> project by
+    <a href="https://github.com/Chimoe">Zifeng "Enrique" Su</a>,
+    <a href="https://github.com/luz5">Ziyi Lu</a>,
+    <a href="https://github.com/kaijianZ">Kaijian Zhong</a>,
+    <a href="https://github.com/ZhengyiShi">Zhengyi Shi</a> .
   </div>
 </div>
-
 </body>
 </html>
