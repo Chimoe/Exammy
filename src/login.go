@@ -21,6 +21,7 @@ accept a JSON containing student's rcs id and password
 return plain text indicating if the id and password are correct
 */
 func login(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", http.StatusBadRequest)
 		return
@@ -67,7 +68,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "WRONG PASSWORD")
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+
+	setCookie(w, r)
 	fmt.Fprint(w, "OK")
 }
 
