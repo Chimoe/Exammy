@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <style>
 body,h1 {font-family: "Raleway", sans-serif}
 body, html {height: 100%}
@@ -30,16 +31,16 @@ body, html {height: 100%}
         <img src="images/webcam.png" alt="Avatar" style="width:30%" class="w3-circle w3-margin-top">
       </div>
 
-      <form class="w3-container" method = "post" action = "/login" >
+      <div class="w3-container" >
         <div class="w3-section">
           <label><b>Username</b></label>
-          <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter RcsID" name="RcsID" required>
+          <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter RcsID" id="RcsID" required>
           <label><b>Password</b></label>
-          <input class="w3-input w3-border" type="password" placeholder="Enter Password" name="Password" required>
-          <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button>
+          <input class="w3-input w3-border" type="password" placeholder="Enter Password" id="Password" required>
+          <button class="w3-button w3-block w3-green w3-section w3-padding" type="button" id="sendForm">Login</button>
           <input class="w3-check w3-margin-top" type="checkbox" checked="checked"> Remember me
         </div>
-      </form>
+      </div>
 
       <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
         <button onclick="document.getElementById('loginbox').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>
@@ -47,7 +48,7 @@ body, html {height: 100%}
       </div>
     </div>
   </div>
-  <div class="w3-display-topleft w3-padding-large w3-xxxlarge  w3-text-opacity">
+  <div class="w3-display-topleft w3-padding-large w3-xxxlarge  w3-text-opacity" id = "exam">
     Exammy
   </div>
   <div class="w3-display-middle">
@@ -62,5 +63,20 @@ body, html {height: 100%}
     <a href="https://github.com/ZhengyiShi">Zhengyi Shi</a> .
   </div>
 </div>
+<script>
+$(document).ready(function(){
+    $("#sendForm").click(function(){
+        console.log("start!")
+        $.post("http://localhost:9090/login",
+        {
+          RcsID: $("#RcsID").val(),
+          Password: $("#Password").val()
+        },
+        function(data,status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });
+    });
+});
+</script>
 </body>
 </html>
