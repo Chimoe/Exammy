@@ -25,7 +25,7 @@ func print_all_cookies(w http.ResponseWriter, r *http.Request) {
 accept a string containing username
 create a uuid pairing with the input username and store them into global map cookies
 */
-func set_cookie(w http.ResponseWriter, r *http.Request) {
+func setCookie(w http.ResponseWriter, r *http.Request) {
 	if cookies == nil {
 		cookies = make(map[string]string)
 	}
@@ -47,7 +47,7 @@ nameCookie: the first one has Name: "username" and Value: string(username)
 Cookie: the second one has Name: string(username) and Value: uuid
 then check if the cookie we get has the valid uuid
 */
-func get_cookie(w http.ResponseWriter, r *http.Request) bool {
+func getCookie(w http.ResponseWriter, r *http.Request) bool {
 	if cookies == nil {
 		cookies = make(map[string]string)
 	}
@@ -69,7 +69,7 @@ func get_cookie(w http.ResponseWriter, r *http.Request) bool {
 }
 
 func get_student(w http.ResponseWriter, r *http.Request) {
-	if get_cookie(w, r) {
+	if getCookie(w, r) {
 		fmt.Fprint(w, "OK")
 	} else {
 		fmt.Fprint(w, "NM$L")
