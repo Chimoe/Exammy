@@ -77,8 +77,9 @@ $(document).ready(function(){
           success: function(data,status){
             alert("Data: " + data + "\nStatus: " + status);
           },
-          error: function(XMLHttpRequest, textStatus, errorThrown){
-            alert(errorThrown);
+          error: function(xhr, textStatus, errorThrown){
+            console.log(xhr.responseText);
+            console.log(xhr.response);
           }
         });
     });
