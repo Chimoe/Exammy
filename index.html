@@ -68,10 +68,10 @@ $(document).ready(function(){
     $("#sendForm").click(function(){
         console.log("start!")
         $.post("http://localhost:9090/login",
-        {
+        JSON.stringify({
           "RcsID": $("#RcsID").val(),
           "Password": $("#Password").val()
-        },
+        }),
         function(data,status){
             alert("Data: " + data + "\nStatus: " + status);
         });
