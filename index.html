@@ -69,8 +69,8 @@ $(document).ready(function(){
         console.log("start!")
         $.post("http://localhost:9090/login",
         {
-          RcsID: $("#RcsID").val(),
-          Password: $("#Password").val()
+          "RcsID": $("#RcsID").val(),
+          "Password": $("#Password").val()
         },
         function(data,status){
             alert("Data: " + data + "\nStatus: " + status);
