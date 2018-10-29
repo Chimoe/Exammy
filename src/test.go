@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	_ "github.com/go-sql-driver/mysql"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -14,8 +15,14 @@ type Course struct {
 	Name    string
 }
 
-func get_student_courses(w http.ResponseWriter, r *http.Request) {
-	if get_cookie(w, r) {
+type Test struct {
+	ID       string
+	CourseID string
+	Name     string
+}
+
+func getStudentCourses(w http.ResponseWriter, r *http.Request) {
+	if getCookie(w, r) {
 		nameCookie, _ := r.Cookie("username")
 		username := nameCookie.Value
 
@@ -55,18 +62,52 @@ func get_student_courses(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(js)
 	} else {
-		http.Error(w, "Please send a request body", http.StatusBadRequest)
+		http.Error(w, "Login again please", http.StatusBadRequest)
 	}
-	/* student1 := Student{"ziyi lu", "", false}
-	student2 := Student{"yanlin zhu", "", false}
-	student3 := Student{"jingfei zhou", "", false}
-	students := []Student{student1, student2}
-	students = append(students, student3)
-	js, err := json.Marshal(students)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+}
+
+func getStudentTests(w http.ResponseWriter, r *http.Request) {
+	if getCookie(w, r) {
+		if r.Body == nil {
+			http.Error(w, "Please send a request body", http.StatusBadRequest)
+			return
+		}
+		courseID, _ := ioutil.ReadAll(r.Body)
+
+		db, err := sql.Open("mysql", dataSourceName)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer db.Close()
+
+		stmt, err := db.Prepare(`SELECT * FROM test WHERE course_id = ? ORDER BY test.name`)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer stmt.Close()
+
+		rows, _ := stmt.Query(courseID)
+		defer rows.Close()
+
+		var tests []Test
+		for rows.Next() {
+			var t Test
+			rows.Scan(&t.ID, &t.CourseID, &t.Name)
+			tests = append(tests, t)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		js, err := json.Marshal(tests)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Write(js)
+
+	} else {
+		http.Error(w, "Login again please", http.StatusBadRequest)
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js) */
 }
