@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 type Course struct {
@@ -19,6 +20,8 @@ type Test struct {
 	ID       string
 	CourseID string
 	Name     string
+	StartT   time.Time
+	EndT     time.Time
 }
 
 func getStudentCourses(w http.ResponseWriter, r *http.Request) {
@@ -94,7 +97,7 @@ func getStudentTests(w http.ResponseWriter, r *http.Request) {
 		var tests []Test
 		for rows.Next() {
 			var t Test
-			rows.Scan(&t.ID, &t.CourseID, &t.Name)
+			rows.Scan(&t.ID, &t.CourseID, &t.Name, &t.StartT, &t.EndT)
 			tests = append(tests, t)
 		}
 
