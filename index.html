@@ -75,11 +75,10 @@ $(document).ready(function(){
             "Password": $("#Password").val()
           }),
           success: function(data,status){
-            alert("Data: " + data + "\nStatus: " + status);
+            window.location.replace("main.html");
           },
           error: function(xhr, textStatus, errorThrown){
             console.log(xhr.responseText);
-            console.log(xhr.response);
           }
         });
     });
