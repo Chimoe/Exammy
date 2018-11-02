@@ -10,18 +10,26 @@ import (
 )
 
 type Course struct {
-	ID      string
+	ID      int
 	Subject string
 	Number  string
 	Name    string
 }
 
 type Test struct {
-	ID       string
-	CourseID string
+	ID       int
+	CourseID int
 	Name     string
 	StartT   time.Time
 	EndT     time.Time
+}
+
+type Question struct {
+	TestID      int
+	QuestionNum int
+	Text        string
+	Answer      string
+	Score       int
 }
 
 func getStudentCourses(w http.ResponseWriter, r *http.Request) {
@@ -103,6 +111,58 @@ func getStudentTests(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		js, err := json.Marshal(tests)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Write(js)
+
+	} else {
+		http.Error(w, "Login again please", http.StatusBadRequest)
+	}
+}
+
+func getTestQuestions(w http.ResponseWriter, r *http.Request) {
+	if getCookie(w, r) {
+		if r.Body == nil {
+			http.Error(w, "Please send a request body", http.StatusBadRequest)
+			return
+		}
+
+		testID, _ := ioutil.ReadAll(r.Body)
+
+		db, err := sql.Open("mysql", dataSourceName)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer db.Close()
+
+		stmt, err := db.Prepare(`SELECT q.questionNum, q.text, q.score
+								FROM test t JOIN question q ON q.testID = t.test_id
+								WHERE t.start_t < CONVERT_TZ(NOW(),'UTC','America/New_York')
+									AND t.end_t > CONVERT_TZ(NOW(),'UTC','America/New_York')
+									AND t.test_id = ?
+								ORDER BY q.questionNum`)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer stmt.Close()
+
+		rows, _ := stmt.Query(testID)
+		defer rows.Close()
+
+		var questions []Question
+		for rows.Next() {
+			var q Question
+			rows.Scan(&q.QuestionNum, &q.Text, &q.Score)
+			questions = append(questions, q)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		js, err := json.Marshal(questions)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

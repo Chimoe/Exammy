@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
@@ -38,7 +37,6 @@ func setCookie(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &nameCookie)
 	http.SetCookie(w, &cookie)
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "OK")
 }
 
 /*
@@ -53,37 +51,12 @@ func getCookie(w http.ResponseWriter, r *http.Request) bool {
 	}
 	nameCookie, _ := r.Cookie("username")
 	if nameCookie == nil {
-		// fmt.Fprint(w, "NM$L")
 		return false
 	} else {
 		cookie, _ := r.Cookie(nameCookie.Value)
 		if cookie.Value != cookies[cookie.Name] {
-			// w.WriteHeader(http.StatusUnauthorized)
-			// fmt.Fprint(w, "INVALID COOKIE")
 			return false
 		}
-		// w.WriteHeader(http.StatusOK)
-		// fmt.Fprint(w, "OK")
 		return true
 	}
-}
-
-func get_student(w http.ResponseWriter, r *http.Request) {
-	if getCookie(w, r) {
-		fmt.Fprint(w, "OK")
-	} else {
-		fmt.Fprint(w, "NM$L")
-	}
-	/* student1 := Student{"ziyi lu", "", false}
-	student2 := Student{"yanlin zhu", "", false}
-	student3 := Student{"jingfei zhou", "", false}
-	students := []Student{student1, student2}
-	students = append(students, student3)
-	js, err := json.Marshal(students)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js) */
 }
