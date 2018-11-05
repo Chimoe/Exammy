@@ -45,7 +45,7 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 
 		stmt, err := db.Prepare(`select c.course_id, c.subject, c.number, c.name
-		from student_course sc join student s on s.student_id = sc.student_id
+		from student_course sc join user s on s.student_id = sc.student_id
 		join course c on c.course_id = sc.course_id
 		where s.rcs_id = ?`)
 		if err != nil {

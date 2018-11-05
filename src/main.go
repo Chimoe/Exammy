@@ -6,8 +6,8 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/set", setCookie)
-	//http.HandleFunc("/reg", register)
+	//http.HandleFunc("/set", setCookie)
+	http.HandleFunc("/reg", register)
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/courses", getStudentCourses)
 	http.HandleFunc("/tests", getStudentTests)

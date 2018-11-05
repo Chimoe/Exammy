@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/satori/go.uuid"
-	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -24,15 +23,14 @@ func print_all_cookies(w http.ResponseWriter, r *http.Request) {
 accept a string containing username
 create a uuid pairing with the input username and store them into global map cookies
 */
-func setCookie(w http.ResponseWriter, r *http.Request) {
+func setCookie(w http.ResponseWriter, r *http.Request, RcsID string) {
 	if cookies == nil {
 		cookies = make(map[string]string)
 	}
-	username, _ := ioutil.ReadAll(r.Body)
 	expiration := time.Now().Add(time.Hour)
 	u1 := uuid.Must(uuid.NewV4()).String()
-	nameCookie := http.Cookie{Name: "username", Value: string(username), Expires: expiration}
-	cookie := http.Cookie{Name: string(username), Value: u1, Expires: expiration}
+	nameCookie := http.Cookie{Name: "username", Value: string(RcsID), Expires: expiration}
+	cookie := http.Cookie{Name: string(RcsID), Value: u1, Expires: expiration}
 	cookies[cookie.Name] = cookie.Value
 	http.SetCookie(w, &nameCookie)
 	http.SetCookie(w, &cookie)
