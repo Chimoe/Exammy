@@ -69,7 +69,7 @@ $(document).ready(function(){
         console.log("start!");
         $.ajax({
           type: "POST",
-          url: "http://localhost:9090/login",
+          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com",
           data: JSON.stringify({
             "RcsID": $("#RcsID").val(),
             "Password": $("#Password").val()
