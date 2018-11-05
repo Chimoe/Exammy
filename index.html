@@ -87,7 +87,7 @@ $(document).ready(function(){
         console.log("sendForm!");
         $.ajax({
           type: "POST",
-          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com",
+          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/login",
           data: JSON.stringify({
             "RcsID": $("#RcsID").val(),
             "Password": $("#Password").val(),
@@ -110,7 +110,7 @@ $(document).ready(function(){
         console.log("sendForm!");
         $.ajax({
           type: "POST",
-          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com",
+          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/login",
           data: JSON.stringify({
             "RcsID": $("#RcsID").val(),
             "Password": $("#Password").val(),
