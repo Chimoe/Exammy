@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 <style>
 body,h1 {font-family: "Raleway", sans-serif}
 body, html {height: 100%}
@@ -19,6 +20,7 @@ body, html {height: 100%}
 }
 
 </style>
+
 <body>
 <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
   <div class="w3-display-topright w3-padding-32 w3-padding-large">
@@ -28,8 +30,10 @@ body, html {height: 100%}
     <div class = "w3-modal-content w3-card-4 w3-animate-zoom w3-text-black" style="max-width:400px">
       <div class = "w3-center"><br>
         <span onclick="document.getElementById('loginbox').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
-        <!--<img src="images/webcam.png" alt="Avatar" style="width:30%" class="w3-circle w3-margin-top">-->
+        <div id = "imgAvatar" > <img src="images/webcam.png" alt="Avatar" style="width:30%" class="w3-circle w3-margin-top"> </div>
+        <div id="videoPlay" style = "display : none">
         <video width="320" height="240" autoplay> Click Video Button </video>
+      </div>
       </div>
 
       <div class="w3-container" >
@@ -65,10 +69,19 @@ body, html {height: 100%}
     <a href="https://github.com/ZhengyiShi">Zhengyi Shi</a> .
   </div>
 </div>
+
+<!-- Func bind to sendForm button
+     send a jason string to server
+     lisen to the feedback
+        If accepted
+            redirect to profile pages
+        Else
+            show error message
+-->
 <script>
 $(document).ready(function(){
     $("#sendForm").click(function(){
-        console.log("start!");
+        console.log("sendForm!");
         $.ajax({
           type: "POST",
           url: "http://ec2-35-153-68-95.compute-1.amazonaws.com",
@@ -80,12 +93,14 @@ $(document).ready(function(){
             window.location.replace("main.html");
           },
           error: function(xhr, textStatus, errorThrown){
+            alert(xhr.responseText);
             console.log(xhr.responseText);
           }
         });
     });
 });
 </script>
+<!-- set constraints For video elements -->
 <script>
 const constraints = {
   video: true
@@ -93,8 +108,17 @@ const constraints = {
 const captureVideo = document.querySelector('#getVideo');
 const video = document.querySelector("#loginbox video");
 captureVideo.onclick = function() {
-  navigator.mediaDevices.getUserMedia(constraints).
-    then(handleSuccess).catch(handleError);
+  var x = document.getElementById("imgAvatar");
+  var y = document.getElementById("videoPlay");
+  if (y.style.display === "none"){
+    x.style.display = "none";
+    y.style.display = "block";
+    navigator.mediaDevices.getUserMedia(constraints).
+      then(handleSuccess).catch(handleError);
+  } else {
+    x.style.display = "block";
+    y.style.display = "none";
+  }
 };
 function handleSuccess(stream) {
   video.srcObject = stream;
