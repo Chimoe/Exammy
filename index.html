@@ -22,13 +22,14 @@ body, html {height: 100%}
 <body>
 <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
   <div class="w3-display-topright w3-padding-32 w3-padding-large">
-    <button class="w3-button w3-lightgreen w3-large" onclick="document.getElementById('loginbox').style.display='block'" style = "width:auto;">Login</button>
+    <button class="w3-button w3-lightgreen w3-large" onclick="document.getElementById('loginbox').style.display='block'" style = "width:auto;" id = "loginbutton">Login</button>
   </div>
   <div id = "loginbox" class="w3-modal">
     <div class = "w3-modal-content w3-card-4 w3-animate-zoom w3-text-black" style="max-width:400px">
       <div class = "w3-center"><br>
         <span onclick="document.getElementById('loginbox').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
-        <img src="images/webcam.png" alt="Avatar" style="width:30%" class="w3-circle w3-margin-top">
+        <!--<img src="images/webcam.png" alt="Avatar" style="width:30%" class="w3-circle w3-margin-top">-->
+        <video width="320" height="240" autoplay> Click Video Button </video>
       </div>
 
       <div class="w3-container" >
@@ -38,6 +39,7 @@ body, html {height: 100%}
           <label><b>Password</b></label>
           <input class="w3-input w3-border" type="password" placeholder="Enter Password" id="Password" required>
           <button class="w3-button w3-block w3-green w3-section w3-padding" type="button" id="sendForm">Login</button>
+          <button class = "w3-button w3-block w3-green w3-section w3-padding" type="button" id="getVideo"> Video</button>
           <input class="w3-check w3-margin-top" type="checkbox" checked="checked"> Remember me
         </div>
       </div>
@@ -52,7 +54,7 @@ body, html {height: 100%}
     Exammy
   </div>
   <div class="w3-display-middle">
-    <h1 class="w3-jumbo w3-Brown w3-animate-top w3-panel w3-black" style= "text-shadow:1px 1px 0 #444">COMING SOON</h1>
+    <h1 class="w3-jumbo w3-Brown w3-animate-top w3-panel w3-black" style= "text-shadow:1px 1px 0 #444">Keep Calm & Do Not Cheat</h1>
     <hr class="w3-border-aqua" style="margin:auto;width:40%">
   </div>
   <div class="w3-display-bottomleft w3-padding-large w3-text-deep-purple">
@@ -84,5 +86,20 @@ $(document).ready(function(){
     });
 });
 </script>
+<script>
+const constraints = {
+  video: true
+};
+const captureVideo = document.querySelector('#getVideo');
+const video = document.querySelector("#loginbox video");
+captureVideo.onclick = function() {
+  navigator.mediaDevices.getUserMedia(constraints).
+    then(handleSuccess).catch(handleError);
+};
+function handleSuccess(stream) {
+  video.srcObject = stream;
+}
+</script>
+
 </body>
 </html>
