@@ -42,7 +42,10 @@ body, html {height: 100%}
           <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter RcsID" id="RcsID" required>
           <label><b>Password</b></label>
           <input class="w3-input w3-border" type="password" placeholder="Enter Password" id="Password" required>
-          <button class="w3-button w3-block w3-green w3-section w3-padding" type="button" id="sendForm">Login</button>
+        <div class = "w3-container">
+          <button class="w3-button w3-block w3-green w3-section w3-padding" type="button" id="sendForm">Student Login</button>
+          <button class="w3-button w3-block w3-green w3-section w3-padding" type="button" id="sendForm2">Instructor Login</button>
+        </div>
           <button class = "w3-button w3-block w3-green w3-section w3-padding" type="button" id="getVideo"> Video</button>
           <input class="w3-check w3-margin-top" type="checkbox" checked="checked"> Remember me
         </div>
@@ -87,7 +90,31 @@ $(document).ready(function(){
           url: "http://ec2-35-153-68-95.compute-1.amazonaws.com",
           data: JSON.stringify({
             "RcsID": $("#RcsID").val(),
-            "Password": $("#Password").val()
+            "Password": $("#Password").val(),
+            "Identity": "True"
+          }),
+          success: function(data,status){
+            window.location.replace("main.html");
+          },
+          error: function(xhr, textStatus, errorThrown){
+            alert(xhr.responseText);
+            console.log(xhr.responseText);
+          }
+        });
+    });
+});
+</script>
+<script>
+$(document).ready(function(){
+    $("#sendForm2").click(function(){
+        console.log("sendForm!");
+        $.ajax({
+          type: "POST",
+          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com",
+          data: JSON.stringify({
+            "RcsID": $("#RcsID").val(),
+            "Password": $("#Password").val(),
+            "Identity": "False"
           }),
           success: function(data,status){
             window.location.replace("main.html");
