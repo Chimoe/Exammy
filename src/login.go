@@ -74,7 +74,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	setCookie(w, r)
+	setCookie(w, r, u.RcsID)
 	fmt.Fprint(w, "OK")
 }
 
@@ -126,15 +126,4 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "OK")
-	/*
-		w.Header().Set("Content-Type", "application/json")
-		js, err := json.Marshal(u)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
-		w.Write(js)
-	*/
 }
