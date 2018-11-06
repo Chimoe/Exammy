@@ -46,7 +46,7 @@ body, html {height: 100%}
           <button class="w3-button w3-block w3-green w3-section w3-padding" type="button" id="sendForm">Student Login</button>
           <button class="w3-button w3-block w3-green w3-section w3-padding" type="button" id="sendForm2">Instructor Login</button>
         </div>
-          <button class = "w3-button w3-block w3-green w3-section w3-padding" type="button" id="getVideo"> FaceID</button>
+          <button class = "w3-button w3-block w3-green w3-section w3-padding" type="button" id="getVideo"> Face Recog</button>
           <input class="w3-check w3-margin-top" type="checkbox" checked="checked"> Remember me
         </div>
       </div>
@@ -87,11 +87,11 @@ $(document).ready(function(){
         console.log("sendForm!");
         $.ajax({
           type: "POST",
-          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com",
+          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/login",
           data: JSON.stringify({
             "RcsID": $("#RcsID").val(),
             "Password": $("#Password").val(),
-            "Identity": "True"
+            "Identity": true
           }),
           success: function(data,status){
             window.location.replace("main.html");
@@ -110,11 +110,11 @@ $(document).ready(function(){
         console.log("sendForm!");
         $.ajax({
           type: "POST",
-          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com",
+          url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/login",
           data: JSON.stringify({
             "RcsID": $("#RcsID").val(),
             "Password": $("#Password").val(),
-            "Identity": "False"
+            "Identity": false
           }),
           success: function(data,status){
             window.location.replace("main2.html");
