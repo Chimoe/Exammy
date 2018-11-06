@@ -17,6 +17,18 @@ type User struct {
 	Identity  bool //true: student   false: instructor
 }
 
+func (u User) encryptedPassword() {
+	pwd, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+	u.Password = string(pwd)
+}
+
+func (u User) empty() bool {
+	return u.RcsID == "" || u.Password == ""
+}
+
 /*  a login API
 accept a JSON containing student's rcs id and password
 return plain text indicating if the id and password are correct
@@ -39,7 +51,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if u.RcsID == "" || u.Password == "" {
+	if u.empty() {
 		http.Error(w, "Please send a rcs_id and a password", http.StatusBadRequest)
 		return
 	}
@@ -94,12 +106,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	pwd, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	u.Password = string(pwd)
+	u.encryptedPassword()
+
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

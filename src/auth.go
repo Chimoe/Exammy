@@ -3,14 +3,36 @@ package main
 import (
 	"github.com/satori/go.uuid"
 	"net/http"
+	"sync"
 	"time"
 )
 
-var cookies map[string]string
+type Session struct {
+	cookies map[string]string
+}
+
+var s *Session
+var once sync.Once
+
+func getSession() *Session {
+	once.Do(func() {
+		s = &Session{cookies: make(map[string]string)}
+	})
+	return s
+}
+
+func (s Session) addCookie(cookie http.Cookie) {
+	s.cookies[cookie.Name] = cookie.Value
+}
+
+func (s Session) checkCookie(cookie http.Cookie) bool {
+	return cookie.Value == s.cookies[cookie.Name]
+}
 
 /* a helper function
 print all username and uuid stored in cookies
 */
+
 /*
 func print_all_cookies(w http.ResponseWriter, r *http.Request) {
 	for username := range cookies {
@@ -24,14 +46,12 @@ accept a string containing username
 create a uuid pairing with the input username and store them into global map cookies
 */
 func setCookie(w http.ResponseWriter, r *http.Request, RcsID string) {
-	if cookies == nil {
-		cookies = make(map[string]string)
-	}
+	session := getSession()
 	expiration := time.Now().Add(time.Hour)
 	u1 := uuid.Must(uuid.NewV4()).String()
 	nameCookie := http.Cookie{Name: "username", Value: string(RcsID), Expires: expiration}
 	cookie := http.Cookie{Name: string(RcsID), Value: u1, Expires: expiration}
-	cookies[cookie.Name] = cookie.Value
+	session.addCookie(cookie)
 	http.SetCookie(w, &nameCookie)
 	http.SetCookie(w, &cookie)
 	w.WriteHeader(http.StatusOK)
@@ -44,17 +64,12 @@ Cookie: the second one has Name: string(username) and Value: uuid
 then check if the cookie we get has the valid uuid
 */
 func getCookie(w http.ResponseWriter, r *http.Request) bool {
-	if cookies == nil {
-		cookies = make(map[string]string)
-	}
+	session := getSession()
 	nameCookie, _ := r.Cookie("username")
 	if nameCookie == nil {
 		return false
 	} else {
 		cookie, _ := r.Cookie(nameCookie.Value)
-		if cookie.Value != cookies[cookie.Name] {
-			return false
-		}
-		return true
+		return session.checkCookie(*cookie)
 	}
 }
