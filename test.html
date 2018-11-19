@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <title>Exam taking</title>
+    <!-- Bootstrap 4 CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- FontAwesome CSS + Font -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- Underscore.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <script src="js/monitor.js"></script>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar bg-dark text-light">
+    <a class="navbar-brand" href="#">Exam Taking</a>
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" target="_blank" href="https://rcos.io">rcos</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="container mt-4">
+    <div id='m-choice'>
+        <input type="checkbox" id="ChoiceA" value="ChoiceA" v-model="checkedChoice">
+        <label for="ChoiceA"> A </label>
+        <input type="checkbox" id="ChoiceB" value="ChoiceB" v-model="checkedChoice">
+        <label for="ChoiceB"> B </label>
+        <input type="checkbox" id="ChoiceC" value="ChoiceC" v-model="checkedChoice">
+        <label for="ChoiceC"> C </label>
+        <br>
+        <span>Selected: {{ checkedChoice }}</span>
+    </div>
+
+    <script src="./js/index.js"></script>
+</div>
+
+
+<!-- Application Container -->
+</body>
+</html>
