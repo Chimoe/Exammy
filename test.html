@@ -4,9 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-    <title>Exam taking</title>
+    <title> Exammy</title>
     <!-- Bootstrap 4 CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <!-- FontAwesome CSS + Font -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
@@ -16,10 +17,28 @@
     <!-- Underscore.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
-    <script src="js/monitor.js"></script>
 </head>
 
 <body>
+
+<script src="js/monitor.js"></script>
+
+<script>
+    const OriginTitle = document.title;
+    let titleTime;
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            document.title = '(つェ⊂)' + OriginTitle;
+            clearTimeout(titleTime);
+        }
+        else {
+            document.title = '(*´∇｀*)' + OriginTitle;
+            titleTime = setTimeout(function () {
+                document.title = OriginTitle;
+            }, 2000);
+        }
+    });
+</script>
 
 <!-- Navbar -->
 <nav class="navbar bg-dark text-light">
@@ -31,22 +50,58 @@
     </ul>
 </nav>
 
-<div class="container mt-4">
-    <div id='m-choice'>
-        <input type="checkbox" id="ChoiceA" value="ChoiceA" v-model="checkedChoice">
-        <label for="ChoiceA"> A </label>
-        <input type="checkbox" id="ChoiceB" value="ChoiceB" v-model="checkedChoice">
-        <label for="ChoiceB"> B </label>
-        <input type="checkbox" id="ChoiceC" value="ChoiceC" v-model="checkedChoice">
-        <label for="ChoiceC"> C </label>
-        <br>
-        <span>Selected: {{ checkedChoice }}</span>
+
+<main>
+    <div class="container fill">
+        <div class="d-flex" id="main-body">
+
+            <div class="card" style="height: 20rem; width: 40rem;">
+                <div class="card-header">
+You have n super washing machines on a line.
+Initially, each washing machine has some dresses or is empty.
+For each move, you could choose any m (1 ≤ m ≤ n) washing machines,
+and pass one dress of each washing machine to
+one of its adjacent washing machines at the same time . Given an integer array representing the number of dresses
+in each washing machine from left to right on the line, you should find the minimum number of moves to make all the washing machines have the same number of dresses. If it is not possible to do it, return -1.
+                </div>
+                <div id='m-choice'>
+                    <input type="checkbox" id="ChoiceA" value="1A" v-model="checkedChoice">
+                    <label for="ChoiceA"> A </label>
+                    <input type="checkbox" id="ChoiceB" value="1B" v-model="checkedChoice">
+                    <label for="ChoiceB"> B </label>
+                    <input type="checkbox" id="ChoiceC" value="1C" v-model="checkedChoice">
+                    <label for="ChoiceC"> C </label>
+                    <br>
+                    <span>Selected: {{ checkedChoice }}</span>
+                </div>
+            </div>
+            <div class="card" style="height: 20rem; width: 40rem;">
+                <div class="card-header">
+Which among the following statements regarding the Surrogacy (Regulation)
+bill, 2016 is incorrect ?
+a. It allows only Indian citizens for Surrogacyin India
+b. The bill allows both gestational and traditional Surrogacy
+c. Any woman in the age range of 25 to 35
+years of age is allowed to undertake
+surrogacy
+d. Surrogacy boards will decide code of conduct for
+Surrogacy in India
+                </div>
+                <div class="card-body">
+                    <div id='m-choice2'>
+                        <input type="checkbox" id="Choice2A" value="2A" v-model="checkedChoice">
+                        <label for="Choice2A"> A </label>
+                        <input type="checkbox" id="Choice2B" value="2B" v-model="checkedChoice">
+                        <label for="Choice2B"> B </label>
+                        <input type="checkbox" id="Choice2C" value="2C" v-model="checkedChoice">
+                        <label for="Choice2C"> C </label>
+                    </div>
+                </div>
+            </div>
+            <script src="./js/index.js"></script>
+        </div>
     </div>
+</main>
 
-    <script src="./js/index.js"></script>
-</div>
-
-
-<!-- Application Container -->
 </body>
 </html>

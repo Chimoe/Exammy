@@ -3,4 +3,10 @@ new Vue({
     data: {
         checkedChoice: []
     }
-})
+});
+new Vue({
+    el: '#m-choice2',
+    data: {
+        checkedChoice2: []
+    }
+});
