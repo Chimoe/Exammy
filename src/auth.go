@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+/*
+key: rcsID
+value: uuid
+*/
 type Session struct {
 	cookies map[string]string
 }

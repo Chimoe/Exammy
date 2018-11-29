@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -248,6 +249,29 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+
+		nameCookie, _ := r.Cookie("username")
+		rcsID := nameCookie.Value
+		fmt.Fprint(w, rcsID)
+	} else {
+		http.Error(w, "Login again please", http.StatusBadRequest)
+	}
+}
+
+func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
+	if getCookie(w, r) {
+		if r.Body == nil {
+			http.Error(w, "Please send a request body", http.StatusBadRequest)
+			return
+		}
+		t, _ := ioutil.ReadAll(r.Body)
+		ts := string(t)
+		testID, _ := strconv.Atoi(ts)
+
+		nameCookie, _ := r.Cookie("username")
+		rcsID := nameCookie.Value
+		fmt.Fprint(w, testID, "\n")
+		fmt.Fprint(w, rcsID)
 
 	} else {
 		http.Error(w, "Login again please", http.StatusBadRequest)
