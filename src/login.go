@@ -41,7 +41,8 @@ return plain text indicating if the id and password are correct
 */
 func login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	var a []byte
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	//var a []byte
 
 	//r.Body.Read(a)
 	//fmt.Print(string(a))
@@ -102,6 +103,8 @@ create a new student account and insert it into database
 return plain text indicating if the account are registered correctly
 */
 func register(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	u := User{}
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", http.StatusBadRequest)

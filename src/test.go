@@ -205,6 +205,9 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		nameCookie, _ := r.Cookie("username")
+		a.RcsID = nameCookie.Value
+
 		db, err := sql.Open("mysql", dataSourceName)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -251,9 +254,6 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		nameCookie, _ := r.Cookie("username")
-		rcsID := nameCookie.Value
-		fmt.Fprint(w, rcsID)
 	} else {
 		http.Error(w, "Login again please", http.StatusBadRequest)
 	}
