@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
 
 <style>
 body,h1 {font-family: "Raleway", sans-serif}
@@ -93,8 +95,9 @@ $(document).ready(function(){
             "Password": $("#Password").val(),
             "Identity": true
           }),
+          xhrFields: {withCredentials: true},
           success: function(data,status){
-            //window.location.replace("student.html");
+            window.location.replace("student.html");
           },
           error: function(xhr, textStatus, errorThrown){
             alert(xhr.responseText);
@@ -116,6 +119,7 @@ $(document).ready(function(){
             "Password": $("#Password").val(),
             "Identity": false
           }),
+          xhrFields: {withCredentials: true},
           success: function(data,status){
             window.location.replace("instructor.html");
           },
