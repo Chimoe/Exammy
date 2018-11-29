@@ -7,12 +7,8 @@ import (
 	"time"
 )
 
-/*
-key: rcsID
-value: uuid
-*/
 type Session struct {
-	cookies map[string]string
+	cookies map[string]string // key: rcsID, value: uuid
 }
 
 var s *Session
@@ -59,11 +55,15 @@ accept a string containing username
 create a uuid pairing with the input username and store them into global map cookies
 */
 func setCookie(w http.ResponseWriter, r *http.Request, RcsID string) {
+	// get the cookies list
 	session := getSession()
+	// create a expiration time ticket
 	expiration := time.Now().Add(time.Hour)
+	// create a uuid
 	u1 := uuid.Must(uuid.NewV4()).String()
 	nameCookie := http.Cookie{Name: "username", Value: string(RcsID), Expires: expiration}
 	cookie := http.Cookie{Name: string(RcsID), Value: u1, Expires: expiration}
+	// add the cookie to session
 	session.addCookie(cookie)
 	http.SetCookie(w, &nameCookie)
 	http.SetCookie(w, &cookie)

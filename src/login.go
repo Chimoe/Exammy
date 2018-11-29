@@ -43,6 +43,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var a []byte
 
+	// read contents in r
 	r.Body.Read(a)
 	fmt.Print(string(a))
 	if r.Body == nil {
@@ -50,6 +51,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// decode the JSON and transfer it to a User struct
 	u := User{}
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
@@ -62,6 +64,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// open database
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,6 +72,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	// get the user information
 	stmt, err := db.Prepare("SELECT password FROM user WHERE rcs_id = ? AND identity = ?")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -79,12 +83,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 	var hashedPassword []byte
 	stmt.QueryRow(u.RcsID, u.Identity).Scan(&hashedPassword)
 
+	// check user rcsID
 	if len(hashedPassword) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "WRONG RCS ID")
 		return
 	}
 
+	// check user password
 	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(u.Password))
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -92,6 +98,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// set a cookie for the valid account
 	setCookie(w, r, u.RcsID)
 	fmt.Fprint(w, "OK")
 }
@@ -103,17 +110,24 @@ return plain text indicating if the account are registered correctly
 */
 func register(w http.ResponseWriter, r *http.Request) {
 	u := User{}
+
+	// read contents in r
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", http.StatusBadRequest)
 		return
 	}
+
+	// decode the JSON and transfer it to a User struct
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// encrypt user password
 	u.encryptedPassword()
 
+	// open the database
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -121,6 +135,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	// insert the new user account
 	stmt, err := db.Prepare(`INSERT user SET rcs_id = ?, first_name = ?, last_name = ?, password = ?
 								   , identity = ?`)
 	if err != nil {
@@ -134,6 +149,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// get the last insert id and print it
 	LastInsertId, err := res.LastInsertId()
 	if err == nil {
 		fmt.Println("LastInsertId:", LastInsertId)
