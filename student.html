@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="css/main.css">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <title>Exammy</title>
 
 </head>
@@ -27,7 +28,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">My Rensselaer <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="#" id = "myname">My Rensselaer <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="#">Courses</a>
@@ -60,12 +61,12 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
-                            Sth
+                            Regrade Requests
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
-                            Sth
+                            Upcomming Tests
                         </a>
                     </li>
                     <li class="nav-item">
@@ -111,3 +112,31 @@
 <a class="navbar-brand" href="#">
     <img src="/images/favicon.ico" width="2000" height="1550" alt="">
 </a>
+
+<script>
+$(document).ready(function(){
+  var c = Cookies.get("username");
+  if (c){
+    console.log(c);
+    var name = document.getElementById("myname");
+    name.innerHTML = "Welcome "+c+" !";
+  }
+  else{
+    window.location.replace("index.html");
+  }
+  $.ajax({
+    type: "GET",
+    url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/courses",
+    data: "NMSl",
+    success: function(data){
+      console.log("hahahaha");
+
+      //window.location.replace("student.html");
+    },
+    error: function(e){
+      console.log("nonon");
+    }
+  });
+
+});
+</script>
