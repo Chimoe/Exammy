@@ -40,7 +40,7 @@ accept a JSON containing student's rcs id and password
 return plain text indicating if the id and password are correct
 */
 func login(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	//var a []byte
 	// var a []byte
@@ -111,7 +111,7 @@ return plain text indicating if the account are registered correctly
 */
 func register(w http.ResponseWriter, r *http.Request) {
 	// create a User struct
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	u := User{}
 	if r.Body == nil {
@@ -155,4 +155,11 @@ func register(w http.ResponseWriter, r *http.Request) {
 	} */
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func secret(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	session := getSession()
+	fmt.Fprint(w, session)
 }

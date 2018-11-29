@@ -44,6 +44,8 @@ type Answer struct {
 Return all available courses of a student user
 */
 func getStudentCourses(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	// check if the user has a valid cookie
 	// if not return error message
 	if getCookie(w, r) {
@@ -94,6 +96,7 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 		// send JSON data to front-end
 		w.Write(js)
 	} else {
+		fmt.Fprint(w, r.Cookies())
 		http.Error(w, "Login again please", http.StatusBadRequest)
 	}
 }
@@ -102,6 +105,8 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 Return all available tests of a course
 */
 func getStudentTests(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	// check if the user has a valid cookie
 	// if not return error message
 	if getCookie(w, r) {
@@ -161,6 +166,8 @@ func getStudentTests(w http.ResponseWriter, r *http.Request) {
 Return all questions of a test/quiz
 */
 func getTestQuestions(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	// check if the user has a valid cookie
 	// if not return error message
 	if getCookie(w, r) {
@@ -183,7 +190,6 @@ func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 		stmt, err := db.Prepare(`SELECT q.questionNum, q.text, q.score
 								FROM test t JOIN question q ON q.testID = t.test_id
 								WHERE t.start_t < CONVERT_TZ(NOW(),'UTC','America/New_York')
-									AND t.end_t > CONVERT_TZ(NOW(),'UTC','America/New_York')
 									AND t.test_id = ?
 								ORDER BY q.questionNum`)
 		if err != nil {
@@ -226,11 +232,17 @@ accept a JSON containing student's answers and test information
 then submit student's answers with his/her id to database
 */
 func submitAnswers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	// check if the user has a valid cookie
 	// if not return error message
 	if getCookie(w, r) {
 		// create a Answer struct
 		a := Answer{}
+
+		nameCookie, _ := r.Cookie("username")
+		a.RcsID = nameCookie.Value
+
 		if r.Body == nil {
 			http.Error(w, "Please send a request body", http.StatusBadRequest)
 			return
@@ -293,12 +305,15 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+		w.WriteHeader(http.StatusOK)
 	} else {
 		http.Error(w, "Login again please", http.StatusBadRequest)
 	}
 }
 
 func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	// check if the user has a valid cookie
 	// if not return error message
 	if getCookie(w, r) {
@@ -309,12 +324,51 @@ func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Please send a request body", http.StatusBadRequest)
 			return
 		}
+
 		t, _ := ioutil.ReadAll(r.Body)
 		ts := string(t)
 		testID, _ := strconv.Atoi(ts)
 
-		fmt.Fprint(w, testID, "\n")
-		fmt.Fprint(w, username)
+		// open database
+		db, err := sql.Open("mysql", dataSourceName)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer db.Close()
+
+		stmt, err := db.Prepare(`SELECT sum(q.score)
+										FROM question q
+										WHERE q.testID = ?`)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		defer stmt.Close()
+
+		var totalScore int
+		stmt.QueryRow(testID).Scan(&totalScore)
+		//TODO: totalscore
+
+		stmt, err = db.Prepare(`SELECT sum(q.score)
+										FROM question q JOIN answer_history ah on q.testID = ah.testID
+                                        and q.questionNum = ah.questionNum
+                                        and q.answer = ah.answer
+										WHERE q.testID = ? and ah.rcs_id = ?`)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var score int
+		stmt.QueryRow(testID, username).Scan(&score)
+		fmt.Fprint(w, score)
+		fmt.Fprint(w, "/")
+		fmt.Fprint(w, totalScore)
+		w.WriteHeader(http.StatusOK)
 
 	} else {
 		http.Error(w, "Login again please", http.StatusBadRequest)
