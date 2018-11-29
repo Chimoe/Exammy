@@ -32,6 +32,12 @@ type Question struct {
 	Score       int
 }
 
+type Answer struct {
+	RcsID   string
+	TestID  int
+	Answers []string
+}
+
 func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 	if getCookie(w, r) {
 		nameCookie, _ := r.Cookie("username")
@@ -173,4 +179,8 @@ func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 	} else {
 		http.Error(w, "Login again please", http.StatusBadRequest)
 	}
+}
+
+func submitAnswers(w http.ResponseWriter, r *http.Request) {
+
 }
