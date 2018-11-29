@@ -14,6 +14,9 @@ type Session struct {
 var s *Session
 var once sync.Once
 
+/*
+Get the valid cookies list
+*/
 func getSession() *Session {
 	once.Do(func() {
 		s = &Session{cookies: make(map[string]string)}
@@ -21,10 +24,16 @@ func getSession() *Session {
 	return s
 }
 
+/*
+Add a new valid cookie into cookies list
+*/
 func (s Session) addCookie(cookie http.Cookie) {
 	s.cookies[cookie.Name] = cookie.Value
 }
 
+/*
+Check if the user's cookie is valid
+*/
 func (s Session) checkCookie(cookie http.Cookie) bool {
 	return cookie.Value == s.cookies[cookie.Name]
 }
