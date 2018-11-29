@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"net/http"
@@ -191,5 +192,23 @@ func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 }
 
 func submitAnswers(w http.ResponseWriter, r *http.Request) {
+	if getCookie(w, r) {
+		a := Answer{}
+		if r.Body == nil {
+			http.Error(w, "Please send a request body", http.StatusBadRequest)
+			return
+		}
+		err := json.NewDecoder(r.Body).Decode(&a)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
+		for i, ans := range a.Answers {
+
+		}
+
+	} else {
+		http.Error(w, "Login again please", http.StatusBadRequest)
+	}
 }
