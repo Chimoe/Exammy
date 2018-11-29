@@ -10,11 +10,15 @@
 
     <!-- FontAwesome CSS + Font -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
-    <title>Exammy</title>
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
 
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+
+    <title>Exammy</title>
+
+</head>
+
+<body>
+<nav class="navbar sticky-top navbar-expand-md navbar-light" style="background-color: #cca4e3;">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -23,24 +27,30 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">My rensselaer <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="#">My Rensselaer <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="#">Courses</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#">To be continued</a>
+            <li class="nav-item active">
+                <a class="nav-link " href="#">To be continued</a>
             </li>
         </ul>
     </div>
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item disabled">
+            <h3>Exammy -> (will be logo)</h3>
+        </li>
+    </ul>
+
     <a class="navbar-brand" href="#">
-        <img style="max-width:50px; max-height:50px; margin-top: -7px;" src="./images/webcam.png" width="980"
+        <img style="max-width:50px; max-height:50px; margin-top: -7px; margin-left: 20px" src="./images/webcam.png" width="980"
              height="982" alt="Brand" class="img-responsive">
     </a>
 </nav>
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 d-none d-md-block sidebar" style="background-color: #e3f2fd;">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -77,11 +87,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            Tests
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="index.html">
                             <i class="fas fa-sign-out-alt"></i>
                             Logout
@@ -90,6 +95,32 @@
                 </ul>
             </div>
         </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="d-flex justify-content-between flex-wrap border-bottom" id="main-body">
+                <div class="container">
+                    <h2>Course information</h2>
+                    <div class="card-deck mb-3" style="width: 44rem">
+                        <div class="card mb-4 text-center">
+                            <div class="card-header">
+                                <h4 class="my-0 font-weight-normal">Course 1</h4>
+                            </div>
+                            <div class="card-body">
+                                <button type="button" class="btn btn-lg btn-block btn-primary">Test</button>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4 text-center">
+                            <div class="card-header">
+                                <h4 class="my-0 font-weight-normal">Course 2</h4>
+                            </div>
+                            <div class="card-body">
+                                <button type="button" class="btn btn-lg btn-block btn-primary">Test</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 </div>
 </body>
@@ -99,3 +130,6 @@
 <a class="navbar-brand" href="#">
     <img src="/images/favicon.ico" width="2000" height="1550" alt="">
 </a>
+
+<style>
+</style>

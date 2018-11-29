@@ -38,6 +38,9 @@ type Answer struct {
 	Answers []string
 }
 
+/*
+Return all available courses of a student user
+*/
 func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 	if getCookie(w, r) {
 		nameCookie, _ := r.Cookie("username")
@@ -83,6 +86,9 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+Return all available tests of a course
+*/
 func getStudentTests(w http.ResponseWriter, r *http.Request) {
 	if getCookie(w, r) {
 		if r.Body == nil {
@@ -129,6 +135,9 @@ func getStudentTests(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+Return all questions of a test/quiz
+*/
 func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 	if getCookie(w, r) {
 		if r.Body == nil {

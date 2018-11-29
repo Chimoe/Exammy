@@ -11,8 +11,8 @@
 .sidebar-sticky {
     position: -webkit-sticky;
     position: sticky;
-    top: 48px;
-    height: calc(100vh - 48px);
+    top: 60px;
+    height: calc(100vh - 60px);
     padding-top: .5rem;
     overflow-x: hidden;
     overflow-y: auto;
@@ -41,3 +41,6 @@
     font-size: .75rem;
     text-transform: uppercase;
 }
+
+.border-top { border-top: 1px solid #e5e5e5; }
+.border-bottom { border-bottom: 1px solid #e5e5e5; }

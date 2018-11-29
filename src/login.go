@@ -17,6 +17,9 @@ type User struct {
 	Identity  bool //true: student   false: instructor
 }
 
+/*
+Encrypt the user password
+*/
 func (u User) encryptedPassword() {
 	pwd, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -25,6 +28,9 @@ func (u User) encryptedPassword() {
 	u.Password = string(pwd)
 }
 
+/*
+Check if the user enters ID and password
+*/
 func (u User) empty() bool {
 	return u.RcsID == "" || u.Password == ""
 }
