@@ -41,16 +41,17 @@ return plain text indicating if the id and password are correct
 */
 func login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	var a []byte
+	// var a []byte
 
-	//r.Body.Read(a)
-	//fmt.Print(string(a))
+	// r.Body.Read(a)
+	// fmt.Print(string(a))
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", http.StatusBadRequest)
 		return
 	}
-
+	// create a User struct
 	u := User{}
+	// decode contents in r and transfer to it
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -62,6 +63,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// open database
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,6 +71,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	// get the user information
 	stmt, err := db.Prepare("SELECT password FROM user WHERE rcs_id = ? AND identity = ?")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -79,12 +82,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 	var hashedPassword []byte
 	stmt.QueryRow(u.RcsID, u.Identity).Scan(&hashedPassword)
 
+	// check if the user id is valid
 	if len(hashedPassword) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "WRONG RCS ID")
 		return
 	}
 
+	// check if the user password is valid
 	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(u.Password))
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -92,6 +97,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// set a cookie for the valid user account
 	setCookie(w, r, u.RcsID)
 	fmt.Fprint(w, "OK")
 }
@@ -102,18 +108,22 @@ create a new student account and insert it into database
 return plain text indicating if the account are registered correctly
 */
 func register(w http.ResponseWriter, r *http.Request) {
+	// create a User struct
 	u := User{}
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", http.StatusBadRequest)
 		return
 	}
+	// decode contents in r and transfer to it
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	// encrypt user password
 	u.encryptedPassword()
 
+	// open database
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -121,6 +131,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
+	// insert a new user account into database
 	stmt, err := db.Prepare(`INSERT user SET rcs_id = ?, first_name = ?, last_name = ?, password = ?
 								   , identity = ?`)
 	if err != nil {
