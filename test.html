@@ -16,6 +16,8 @@
 
     <!-- Underscore.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 
 </head>
 
@@ -53,8 +55,9 @@
 
 
 <main>
-    <div class="container fill">
-        <div class="d-flex" id="main-body">
+    <div class="container fill" >
+      <button type="button" class="btn" id = "gamestart" onclick="openFullscreen()">Start test?</button>
+        <div class="d-flex" id="main-body" >
                 <div id='m-choice'>
                     <span>Selected: {{ checkedChoice }}</span>
                     <div class="row">
@@ -117,4 +120,61 @@
 </main>
 
 </body>
+
 </html>
+<script type="text/javascript">
+  var elem = document.getElementById("main-body");
+  var button = document.getElementById("gamestart")
+	//rifht click disabled
+	document.body.oncontextmenu=document.body.ondragstart= 	document.body.onselectstart=document.body.onbeforecopy=function(){return false;};
+	//disabled cut
+	document.body.oncopy=document.body.oncut=function(){return false;};
+	var blurNum=1;
+  function openFullscreen() {
+    button.style.display = "none";
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) { /* Firefox */
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE/Edge */
+      elem.msRequestFullscreen();
+    }
+}
+	$(window).on('blur resize',function(){
+		if(blurNum>3){
+			alert("Test end！");
+			$(window).off("beforeunload");
+			CloseWebPage();
+		}else{
+			alert("Warning changed web size"+blurNum+"time(s)！");
+		}
+		blurNum++;
+	});
+
+	$(window).on('beforeunload', function(){
+		$(this).off('blur resize');
+	    return 'Exit test!';
+	});
+
+	//close window
+	function CloseWebPage(){
+	 if (navigator.userAgent.indexOf("MSIE") > 0) {
+	  if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
+	   window.opener = null;
+	   window.close();
+	  } else {
+	   window.open('', '_top');
+	   window.top.close();
+	  }
+	 }
+	 else if (navigator.userAgent.indexOf("Firefox") > 0) {
+	  window.location.href = 'about:blank ';
+	 } else {
+	  window.opener = null;
+	  window.open('', '_self', '');
+	  window.close();
+	 }
+	}
+</script>
