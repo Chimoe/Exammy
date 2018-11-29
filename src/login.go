@@ -53,7 +53,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	// create a User struct
 	u := User{}
-	// decode contents in r and transfer to it
+	// decode contents in r and transfer it to User struct
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -118,7 +118,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Please send a request body", http.StatusBadRequest)
 		return
 	}
-	// decode contents in r and transfer to it
+	// decode contents in r and transfer it to User struct
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
