@@ -208,8 +208,50 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		for i, ans := range a.Answers {
+		db, err := sql.Open("mysql", dataSourceName)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer db.Close()
 
+		stmt, err := db.Prepare(`SELECT count(*)
+						 FROM test t
+						 WHERE t.start_t < CONVERT_TZ(NOW(),'UTC','America/New_York')
+ 						 AND t.end_t > CONVERT_TZ(NOW(),'UTC','America/New_York')
+						 AND t.test_id = ?`)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		defer stmt.Close()
+
+		var inTime int
+		stmt.QueryRow(a.TestID).Scan(&inTime)
+
+		if inTime == 0 {
+			http.Error(w, "Time Limit Exceeded", http.StatusBadRequest)
+			return
+		}
+		stmt, err = db.Prepare(`INSERT answer_history SET rcs_id = ?, testID = ?, questionNum = ?,
+                          					answer = ?`)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		defer stmt.Close()
+
+		for i, ans := range a.Answers {
+			_, err := stmt.Exec(a.RcsID, a.TestID, i+1, ans)
+
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 
 		fmt.Fprint(w, username)
