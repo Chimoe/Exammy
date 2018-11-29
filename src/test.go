@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"net/http"
@@ -32,6 +33,15 @@ type Question struct {
 	Score       int
 }
 
+type Answer struct {
+	RcsID   string
+	TestID  int
+	Answers []string
+}
+
+/*
+Return all available courses of a student user
+*/
 func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 	if getCookie(w, r) {
 		nameCookie, _ := r.Cookie("username")
@@ -77,6 +87,9 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+Return all available tests of a course
+*/
 func getStudentTests(w http.ResponseWriter, r *http.Request) {
 	if getCookie(w, r) {
 		if r.Body == nil {
@@ -123,6 +136,9 @@ func getStudentTests(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+Return all questions of a test/quiz
+*/
 func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 	if getCookie(w, r) {
 		if r.Body == nil {
@@ -169,6 +185,28 @@ func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusOK)
 		w.Write(js)
+
+	} else {
+		http.Error(w, "Login again please", http.StatusBadRequest)
+	}
+}
+
+func submitAnswers(w http.ResponseWriter, r *http.Request) {
+	if getCookie(w, r) {
+		a := Answer{}
+		if r.Body == nil {
+			http.Error(w, "Please send a request body", http.StatusBadRequest)
+			return
+		}
+		err := json.NewDecoder(r.Body).Decode(&a)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		for i, ans := range a.Answers {
+
+		}
 
 	} else {
 		http.Error(w, "Login again please", http.StatusBadRequest)
