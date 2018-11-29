@@ -261,6 +261,9 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 
 func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 	if getCookie(w, r) {
+		nameCookie, _ := r.Cookie("username")
+		username := nameCookie.Value
+
 		if r.Body == nil {
 			http.Error(w, "Please send a request body", http.StatusBadRequest)
 			return
@@ -269,10 +272,8 @@ func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 		ts := string(t)
 		testID, _ := strconv.Atoi(ts)
 
-		nameCookie, _ := r.Cookie("username")
-		rcsID := nameCookie.Value
 		fmt.Fprint(w, testID, "\n")
-		fmt.Fprint(w, rcsID)
+		fmt.Fprint(w, username)
 
 	} else {
 		http.Error(w, "Login again please", http.StatusBadRequest)
