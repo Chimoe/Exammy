@@ -15,6 +15,7 @@ func main() {
 	http.HandleFunc("/tests", getStudentTests)
 	http.HandleFunc("/questions", getTestQuestions)
 	http.HandleFunc("/answers", submitAnswers)
+	http.HandleFunc("/grade", autogradeAnswer)
 	err := http.ListenAndServe(":9090", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
