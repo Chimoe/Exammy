@@ -43,8 +43,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var a []byte
 
-	r.Body.Read(a)
-	fmt.Print(string(a))
+	//r.Body.Read(a)
+	//fmt.Print(string(a))
 	if r.Body == nil {
 		http.Error(w, "Please send a request body", http.StatusBadRequest)
 		return
@@ -129,15 +129,15 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(u.RcsID, u.FirstName, u.LastName, u.Password, u.Identity)
+	_, err = stmt.Exec(u.RcsID, u.FirstName, u.LastName, u.Password, u.Identity)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	LastInsertId, err := res.LastInsertId()
-	if err == nil {
+	/* LastInsertId, err := res.LastInsertId()
+	 if err == nil {
 		fmt.Println("LastInsertId:", LastInsertId)
-	}
+	} */
 
 	w.WriteHeader(http.StatusOK)
 }
