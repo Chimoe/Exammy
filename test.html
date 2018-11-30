@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <!-- Fix view to device-width -->
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
     <title> Exammy</title>
@@ -16,6 +17,8 @@
 
     <!-- Underscore.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <!-- jquery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 
@@ -25,6 +28,7 @@
 
 <script src="js/monitor.js"></script>
 
+<!-- Window change detection -->
 <script>
     const OriginTitle = document.title;
     let titleTime;
@@ -53,12 +57,14 @@
     </ul>
 </nav>
 
-
+<!-- main container -->
 <main>
     <div class="container fill">
         <div class="d-flex" id="main-body" style="padding-bottom: 20px">
+                <!-- Vue.js input binding support -->
                 <div id='m-choice' style="padding-top: 20px">
                     <span>Selected: {{ checkedChoice }}</span>
+                    <!-- Bootstrap card for containing test questions -->
                     <div class="row" style="padding-top: 20px">
 
                         <div class='col-sm-6'>
@@ -114,7 +120,7 @@
 <script type="text/javascript">
   var elem = document.getElementById("main-body");
   var button = document.getElementById("gamestart")
-	//rifht click disabled
+	//right click disabled
 	document.body.oncontextmenu=document.body.ondragstart= 	document.body.onselectstart=document.body.onbeforecopy=function(){return false;};
 	//disabled cut
 	document.body.oncopy=document.body.oncut=function(){return false;};
