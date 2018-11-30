@@ -149,10 +149,6 @@ func register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	/* LastInsertId, err := res.LastInsertId()
-	 if err == nil {
-		fmt.Println("LastInsertId:", LastInsertId)
-	} */
 
 	w.WriteHeader(http.StatusOK)
 }
