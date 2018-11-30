@@ -102,7 +102,8 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-Return all available tests of a course
+accept a course id
+Return all available tests of the course
 */
 func getStudentTests(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
@@ -163,7 +164,8 @@ func getStudentTests(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-Return all questions of a test/quiz
+accept a testID
+return all questions of the test/quiz
 */
 func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
@@ -268,7 +270,6 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 						 WHERE t.start_t < CONVERT_TZ(NOW(),'UTC','America/New_York')
  						 AND t.end_t > CONVERT_TZ(NOW(),'UTC','America/New_York')
 						 AND t.test_id = ?`)
-
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -288,7 +289,6 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 		// insert a new answer sheet into database
 		stmt, err = db.Prepare(`INSERT answer_history SET rcs_id = ?, testID = ?, questionNum = ?,
                           					answer = ?`)
-
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -311,6 +311,10 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+accept a string containing testID
+then submit student's grade of the given test
+*/
 func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -324,7 +328,7 @@ func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Please send a request body", http.StatusBadRequest)
 			return
 		}
-
+		// read r and transfer the contents in it to int type
 		t, _ := ioutil.ReadAll(r.Body)
 		ts := string(t)
 		testID, _ := strconv.Atoi(ts)
@@ -337,10 +341,10 @@ func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 		}
 		defer db.Close()
 
+		// get the question information
 		stmt, err := db.Prepare(`SELECT sum(q.score)
 										FROM question q
 										WHERE q.testID = ?`)
-
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -350,14 +354,13 @@ func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 
 		var totalScore int
 		stmt.QueryRow(testID).Scan(&totalScore)
-		//TODO: totalscore
+		// check the student's answers
 
 		stmt, err = db.Prepare(`SELECT sum(q.score)
 										FROM question q JOIN answer_history ah on q.testID = ah.testID
                                         and q.questionNum = ah.questionNum
                                         and q.answer = ah.answer
 										WHERE q.testID = ? and ah.rcs_id = ?`)
-
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
