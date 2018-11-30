@@ -26,6 +26,34 @@ type Test struct {
 	EndT     time.Time
 }
 
+func (t Test) totalScore(w http.ResponseWriter) int {
+	// open database
+	db, err := sql.Open("mysql", dataSourceName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 0
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare(`SELECT sum(q.score)
+										FROM question q
+										WHERE q.testID = ?`)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 0
+	}
+
+	defer stmt.Close()
+
+	var totalScore int
+	stmt.QueryRow(t.ID).Scan(&totalScore)
+	if totalScore == 0 {
+		http.Error(w, "Test does not exist", http.StatusBadRequest)
+	}
+	return totalScore
+}
+
 type Question struct {
 	TestID      int
 	QuestionNum int
@@ -46,6 +74,7 @@ Return all available courses of a student user
 func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	// check if the user has a valid cookie
 	// if not return error message
 	if getCookie(w, r) {
@@ -66,6 +95,7 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 		from student_course sc join user s on s.student_id = sc.student_id
 		join course c on c.course_id = sc.course_id
 		where s.rcs_id = ?`)
+
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -86,12 +116,14 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
+
 		// marshal courses to JSON data
 		js, err := json.Marshal(courses)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		w.WriteHeader(http.StatusOK)
 		// send JSON data to front-end
 		w.Write(js)
@@ -270,6 +302,7 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 						 WHERE t.start_t < CONVERT_TZ(NOW(),'UTC','America/New_York')
  						 AND t.end_t > CONVERT_TZ(NOW(),'UTC','America/New_York')
 						 AND t.test_id = ?`)
+
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -289,6 +322,7 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 		// insert a new answer sheet into database
 		stmt, err = db.Prepare(`INSERT answer_history SET rcs_id = ?, testID = ?, questionNum = ?,
                           					answer = ?`)
+
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -333,6 +367,16 @@ func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 		ts := string(t)
 		testID, _ := strconv.Atoi(ts)
 
+		test := Test{}
+		test.ID = testID
+
+		totalScoreV := test.totalScore(w)
+		if totalScoreV == 0 {
+			return
+		}
+
+		// check the student's answers
+
 		// open database
 		db, err := sql.Open("mysql", dataSourceName)
 		if err != nil {
@@ -341,26 +385,12 @@ func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 		}
 		defer db.Close()
 
-		// get the question information
 		stmt, err := db.Prepare(`SELECT sum(q.score)
-										FROM question q
-										WHERE q.testID = ?`)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		defer stmt.Close()
-
-		var totalScore int
-		stmt.QueryRow(testID).Scan(&totalScore)
-		// check the student's answers
-
-		stmt, err = db.Prepare(`SELECT sum(q.score)
 										FROM question q JOIN answer_history ah on q.testID = ah.testID
                                         and q.questionNum = ah.questionNum
                                         and q.answer = ah.answer
 										WHERE q.testID = ? and ah.rcs_id = ?`)
+
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -370,7 +400,7 @@ func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 		stmt.QueryRow(testID, username).Scan(&score)
 		fmt.Fprint(w, score)
 		fmt.Fprint(w, "/")
-		fmt.Fprint(w, totalScore)
+		fmt.Fprint(w, totalScoreV)
 		w.WriteHeader(http.StatusOK)
 
 	} else {

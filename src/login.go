@@ -156,10 +156,3 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 }
-
-func secret(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	session := getSession()
-	fmt.Fprint(w, session)
-}
