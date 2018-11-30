@@ -15,7 +15,8 @@ var s *Session
 var once sync.Once
 
 /*
-Get the valid cookies list
+Get the valid cookies map
+Using singleton design pattern
 */
 func getSession() *Session {
 	once.Do(func() {
