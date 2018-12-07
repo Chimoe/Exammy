@@ -76,7 +76,7 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 
 /*
 accept a course id(string)
-Return all available tests of the course
+Return all available tests of the course in JSON types
 */
 func getStudentTests(w http.ResponseWriter, r *http.Request) {
 	if !scrutinize(w, r) {
@@ -130,7 +130,7 @@ func getStudentTests(w http.ResponseWriter, r *http.Request) {
 
 /*
 accept a testID (string)
-return all questions of the test/quiz
+return all questions of the test/quiz in JSON type
 */
 func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 	if !scrutinize(w, r) {
@@ -193,7 +193,7 @@ JSON: {
   		"TestID": 1,
   		"Answers": ["A", "B"]
 	}
-then submit student's answers with his/her id to database
+then submit student's answers to database
 */
 func submitAnswers(w http.ResponseWriter, r *http.Request) {
 	if !scrutinize(w, r) {
@@ -241,7 +241,9 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 
 /*
 accept a string containing testID
-then submit student's grade of the given test
+this function will read the rcs id from the cookie
+it will compare the the students' answer with the correct answer
+and return the string "{student score}/{total score}"
 */
 func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 	if !scrutinize(w, r) {
