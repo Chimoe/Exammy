@@ -78,6 +78,8 @@ accept a course id (string)
 Return all available tests of the course in JSON types
 */
 func getStudentTests(w http.ResponseWriter, r *http.Request) {
+	// check if the user has a valid cookie
+	// and then check if front-end sends a valid body
 	if !scrutinize(w, r) {
 		return
 	}
@@ -132,6 +134,8 @@ accept a testID (string)
 return all questions of the test/quiz in JSON type
 */
 func getTestQuestions(w http.ResponseWriter, r *http.Request) {
+	// check if the user has a valid cookie
+	// and then check if front-end sends a valid body
 	if !scrutinize(w, r) {
 		return
 	}
@@ -196,6 +200,8 @@ JSON:
 then submit student's answers to database
 */
 func submitAnswers(w http.ResponseWriter, r *http.Request) {
+	// check if the user has a valid cookie
+	// and then check if front-end sends a valid body
 	if !scrutinize(w, r) {
 		return
 	}
@@ -203,6 +209,7 @@ func submitAnswers(w http.ResponseWriter, r *http.Request) {
 	// create a Answer struct
 	a := Answer{}
 
+	// get user id from cookie
 	nameCookie, _ := r.Cookie("username")
 	a.RcsID = nameCookie.Value
 
@@ -246,10 +253,13 @@ it will compare the the students' answer with the correct answer
 and return the string "{student score}/{total score}"
 */
 func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
+	// check if the user has a valid cookie
+	// and then check if front-end sends a valid body
 	if !scrutinize(w, r) {
 		return
 	}
 
+	// get user id from cookie
 	nameCookie, _ := r.Cookie("username")
 	username := nameCookie.Value
 
@@ -297,4 +307,54 @@ func autogradeAnswer(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "/")
 	fmt.Fprint(w, total)
 	w.WriteHeader(http.StatusOK)
+}
+
+/*
+accept a JSON containing course id and test id
+JSON:
+{
+	"courseID": 1,
+	"TestID": 1
+}
+then submit a regrade request of the test to corresponding instructor
+*/
+func regrade(w http.ResponseWriter, r *http.Request) {
+	// check if the user has a valid cookie
+	// and then check if front-end sends a valid body
+	if !scrutinize(w, r) {
+		return
+	}
+
+	// get user id from cookie
+	nameCookie, _ := r.Cookie("username")
+	username := nameCookie.Value
+
+	t := Test{}
+	// decode contents in r and transfer it to Answer struct
+	err := json.NewDecoder(r.Body).Decode(&t)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// open database
+	db, err := sql.Open("mysql", dataSourceName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
+
+	// get instructor name
+
+	// check the submission is on time
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// insert student id, course id, test id and instructor id to database.
+
+	w.WriteHeader(http.StatusOK)
+
 }
