@@ -61,7 +61,6 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-
 	// marshal courses to JSON data
 	js, err := json.Marshal(courses)
 	if err != nil {
@@ -75,7 +74,7 @@ func getStudentCourses(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-accept a course id(string)
+accept a course id (string)
 Return all available tests of the course in JSON types
 */
 func getStudentTests(w http.ResponseWriter, r *http.Request) {
@@ -188,11 +187,12 @@ func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 
 /*
 accept a JSON containing student's answers and test information
-JSON: {
-  		"RcsID": "zhongk",
-  		"TestID": 1,
-  		"Answers": ["A", "B"]
-	}
+JSON:
+{
+	"RcsID": "zhongk",
+	"TestID": 1,
+	"Answers": ["A", "B"]
+}
 then submit student's answers to database
 */
 func submitAnswers(w http.ResponseWriter, r *http.Request) {

@@ -37,12 +37,17 @@ func (u User) empty() bool {
 
 /*  a login API
 accept a JSON containing student's rcs id and password
+JSON:
+{
+	"RcsID": "shiz2",
+	"Password": "password"
+}
 return plain text indicating if the id and password are correct
 */
 func login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://ec2-35-153-68-95.compute-1.amazonaws.com")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	//var a []byte
+	// var a []byte
 	// var a []byte
 
 	// r.Body.Read(a)
@@ -106,6 +111,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 /*  a register API
 accept a JSON containing student's rcs id, first name, last name and password
+JSON:
+{
+	"RcsID": "shiz2",
+	"FirstName": "Shi",
+	"LastName": "Zhengyi",
+	"Password": "password"
+}
 create a new student account and insert it into database
 return plain text indicating if the account are registered correctly
 */
