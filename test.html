@@ -20,6 +20,8 @@
 
     <!-- jquery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
 
 
 </head>
@@ -49,8 +51,6 @@
 <!-- Navbar -->
 <nav class="navbar text-light" style="background-color: #cca4e3;">
     <h1 style="padding-right: 20px">Exam taking</h1>
-    <button type="button" class="btn btn-warning" id = "gamestart" onclick="openFullscreen()" >Start test?</button>
-    <button type="button" class="btn btn-warning" id = "Regrade" style.display="none" onclick = "sendre()">Regrade</button>
     <ul class="navbar-nav ml-auto">
         <li class="nav-item">
             <a class="nav-link" target="_blank" href="https://rcos.io">Rensselaer Center of Open Source</a>
@@ -62,55 +62,7 @@
 <main>
     <div class="container fill">
         <div class="d-flex" id="main-body" style="padding-bottom: 20px">
-                <!-- Vue.js input binding support -->
-                <div id='m-choice' style="padding-top: 20px">
-                    <span>Selected: {{ checkedChoice }}</span>
-                    <!-- Bootstrap card for containing test questions -->
-                    <div class="row" style="padding-top: 20px">
-
-                        <div class='col-sm-6'>
-
-                        <div class="card" style="padding: 5px">
-                            <div class="card-header">
-                                Paxos algorithm is designed by:<br>
-                                A: Leslie Lamport<br>
-                                B: Einstein<br>
-                                C: Alan Turing<br>
-                                D: Steve Jobs<br>
-                            </div>
-                            <div class="card-body">
-                                <input type="checkbox" id="ChoiceA" value="1A" v-model="checkedChoice">
-                                <label for="ChoiceA"> A </label>
-                                <input type="checkbox" id="ChoiceB" value="1B" v-model="checkedChoice">
-                                <label for="ChoiceB"> B </label>
-                                <input type="checkbox" id="ChoiceC" value="1C" v-model="checkedChoice">
-                                <label for="ChoiceC"> C </label>
-                                <input type="checkbox" id="ChoiceD" value="1D" v-model="checkedChoice">
-                                <label for="ChoiceC"> D </label>
-                                <br>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="card" style="padding: 5px">
-                            <div class="card-header">
-                                Wuu-Bernstein algorithm make use of:<br>
-                                A: physical clock<br>
-                                B: Lamport Clock<br>
-                            </div>
-                            <div class="card-body">
-                                <input type="checkbox" id="Choice2A" value="2A" v-model="checkedChoice">
-                                <label for="Choice2A"> A </label>
-                                <input type="checkbox" id="Choice2B" value="2B" v-model="checkedChoice">
-                                <label for="Choice2B"> B </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div>
-              <button type="button" class="btn btn-primary" onclick="sendans()">Submit</button>
-            </div>
+          <button type="button" class="btn btn-warning center-block" id = "gamestart" onclick="openFullscreen()" >Start test?</button>
         </div>
 
 

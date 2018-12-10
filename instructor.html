@@ -103,15 +103,26 @@
                       </div>
 
                       <!-- Modal body -->
-                      <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1"/>
-                        <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      <div class="modal-body">
+                        <h5 class="modal-title">Enter Start Time</h5>
+                        <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                          <input type="text" id = "startTime" class="form-control datetimepicker-input" data-target="#datetimepicker1"/>
+                          <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                          </div>
+                        </div>
+                        <h5 class="modal-title">Enter End Time</h5>
+                        <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                          <input type="text" id = "endTime" class="form-control datetimepicker-input" data-target="#datetimepicker2"/>
+                          <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                          </div>
                         </div>
                       </div>
 
                       <!-- Modal footer -->
                       <div class="modal-footer">
+                        <button type="button" name = "submitTimer" class="btn btn-success float-sm-left"  onclick="getTimerInput(this.id)">Submit</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                       </div>
 
@@ -191,7 +202,7 @@ function gettest(btn_id){
         $newtest.append("<td>"+alltests[i].Name+"</td>");
         $newtest.append("<td>"+alltests[i].StartT+"</td>");
         $newtest.append("<td>"+alltests[i].EndT+"</td>");
-        $newtest.append("<td><button class = \"btn btn-success\" data-toggle=\"modal\" data-target=\"#myModal\" id = \""+alltests[i].ID+"\">Set Time</button></td>");
+        $newtest.append("<td><button class = \"btn btn-success\" data-toggle=\"modal\" data-target=\"#myModal\" onclick = \"datetimer(this.id)\" id = \""+alltests[i].ID+"\">Set Time</button></td>");
         testLists.append($newtest);
       };
       $("#myInput").on("keyup", function() {
@@ -210,5 +221,60 @@ function gettest(btn_id){
 };
 $(function(){
   $('#datetimepicker1').datetimepicker();
+  $('#datetimepicker2').datetimepicker();
 });
+function datetimer(test_id){
+
+  var t = document.getElementsByName('submitTimer');
+  t.id = test_id;
+  console.log(t.id);
+};
+function getTimerInput(test_id){
+  if (test_id == "none"){
+    console.log(test_id);
+    alert("Unexpected Error!");
+  }
+  else{
+    var st = document.getElementById("startTime").value;
+    var mmddyyhh = st.split(' ');
+    var mmddyy = mmddyyhh[0].split('/');
+    var hhmm = mmddyyhh[1].split(':');
+    if (mmddyyhh[2] == "AM"){
+      var stime = mmddyy[2]+"-"+mmddyy[0]+"-"+mmddyy[1]+"T"+mmddyyhh[1]+":00z";
+    }
+    else{
+      var hh = hhmm[0]+12;
+      var stime = mmddyy[2]+"-"+mmddyy[0]+"-"+mmddyy[1]+"T"+hh+":"+hhmm[1]+":00z";
+    }
+
+    var et = document.getElementById("endTime").value;
+    var mmddyyhh = et.split(' ');
+    var mmddyy = mmddyyhh[0].split('/');
+    var hhmm = mmddyyhh[1].split(':');
+    if (mmddyyhh[2] == "AM"){
+      var etime = mmddyy[2]+"-"+mmddyy[0]+"-"+mmddyy[1]+"T"+mmddyyhh[1]+":00z";
+    }
+    else{
+      var hh = hhmm[0]+12;
+      var etime = mmddyy[2]+"-"+mmddyy[0]+"-"+mmddyy[1]+"T"+hh+":"+hhmm[1]+":00z";
+    }
+    $.ajax({
+      type: "POST",
+      url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/set",
+      data: JSON.stringify({
+        "ID": test_id,
+        "StartT": stime,
+        "EndT": etime
+      }),
+      xhrFields: {withCredentials: true},
+      success: function(data,status){
+        
+      },
+      error: function(xhr, textStatus, errorThrown){
+        alert(xhr.responseText);
+      }
+    });
+
+  }
+}
 </script>

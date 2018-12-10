@@ -162,7 +162,7 @@ function gettest(btn_id){
         $newtest.append("<td>"+alltests[i].Name+"</td>");
         $newtest.append("<td>"+alltests[i].StartT+"</td>");
         $newtest.append("<td>"+alltests[i].EndT+"</td>");
-        $newtest.append("<td><button class = \"btn btn-success\" id = \""+alltests[i].ID+"\">Take Test</button></td>");
+        $newtest.append("<td><button class = \"btn btn-success\" onclick = \"gototest(this.id)\" id = \""+alltests[i].ID+"\">Take Test</button></td>");
         testLists.append($newtest);
       };
       $("#myInput").on("keyup", function() {
@@ -180,5 +180,9 @@ function gettest(btn_id){
   })
 
 };
+function gototest(test_id){
+  document.cookie = "test_id="+test_id;
+  window.location.replace("test.html");
+}
 
 </script>
