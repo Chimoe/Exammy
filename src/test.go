@@ -196,7 +196,6 @@ func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 accept a JSON containing student's answers and test information
 JSON:
 {
-	"RcsID": "zhongk",
 	"TestID": 1,
 	"Answers": ["A", "B"]
 }
