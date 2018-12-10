@@ -140,8 +140,10 @@ func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// read testID from request body
-	testID, _ := ioutil.ReadAll(r.Body)
+	// read r and transfer the contents in it to int type
+	t, _ := ioutil.ReadAll(r.Body)
+	ts := string(t)
+	testID, _ := strconv.Atoi(ts)
 
 	// open database
 	db, err := sql.Open("mysql", dataSourceName)
@@ -173,6 +175,7 @@ func getTestQuestions(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var q Question
 		rows.Scan(&q.QuestionNum, &q.Text, &q.Score)
+		q.TestID = testID
 		questions = append(questions, q)
 	}
 
@@ -336,7 +339,6 @@ func regrade(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	// open database
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
