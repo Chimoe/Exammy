@@ -255,7 +255,7 @@ function getTimerInput(test_id){
       var etime = mmddyy[2]+"-"+mmddyy[0]+"-"+mmddyy[1]+"T"+mmddyyhh[1]+":00z";
     }
     else{
-      var hh = hhmm[0]+12;
+      var hh = parseInt(hhmm[0])+12;
       var etime = mmddyy[2]+"-"+mmddyy[0]+"-"+mmddyy[1]+"T"+hh+":"+hhmm[1]+":00z";
     }
     $.ajax({
@@ -267,8 +267,8 @@ function getTimerInput(test_id){
         "EndT": etime
       }),
       xhrFields: {withCredentials: true},
-      success: function(data,status){
-        
+      success: function(data,status,xhr){
+
       },
       error: function(xhr, textStatus, errorThrown){
         alert(xhr.responseText);
