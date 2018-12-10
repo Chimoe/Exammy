@@ -62,11 +62,10 @@
 <main>
     <div class="container fill">
         <div class="d-flex" id="main-body" style="padding-bottom: 20px">
+          <div>
           <button type="button" class="btn btn-warning center-block" id = "gamestart" onclick="openFullscreen()" >Start test?</button>
         </div>
-
-
-        <script src="./js/index.js"></script>
+        </div>
     </div>
 </main>
 
@@ -81,38 +80,70 @@ $(document).ready(function(){
   else{
     window.location.replace("index.html");
   }
-  $.ajax({
-    type: "POST",
-    url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/courses",
-    xhrFields: {withCredentials: true},
-    success: function(data,status,xhr){
-      console.log("hahahaha");
-      var para = document.createElement("p");
-      var node = document.createTextNode(xhr.responseText);
-      para.appendChild(node);
-      var element = document.getElementById("info");
-      element.appendChild(para);
-
-      //window.location.replace("student.html");
-    },
-    error: function(e){
-      console.log("nonon");
-    }
-  });
 
 });
 </script>
 <script type="text/javascript">
+  var test_id = Cookies.get("test_id");
+  document.cookie = "test_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; ";
   var elem = document.getElementById("main-body");
   var button = document.getElementById("gamestart")
 	//right click disabled
 	document.body.oncontextmenu=document.body.ondragstart= 	document.body.onselectstart=document.body.onbeforecopy=function(){return false;};
 	//disabled cut
 	document.body.oncopy=document.body.oncut=function(){return false;};
-	var blurNum=-3;
-  var arr = ["A", "B"];
+	var blurNum=0;
   function openFullscreen() {
     button.style.display = "none";
+    $.ajax({
+      type: "POST",
+      url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/questions",
+      data: test_id,
+      xhrFields: {withCredentials: true},
+      success: function(data,status,xhr){
+        console.log("hahahaha");
+        var allquestions = $.parseJSON(xhr.responseText);
+        console.log(allquestions);
+        var main = $("#main-body");
+        main.append("<div id=\'m-choice\' style=\"padding-top: 20px\"><span>Selected: {{ checkedChoice }}</span><div class=\"row\" id = \"testcontent\"style=\"padding-top: 20px\"></div></div>")
+        main.append("<div><button type=\"button\" class=\"btn btn-primary\" onclick=\"sendans()\">Submit</button></div>");
+        var row = $("#testcontent");
+        if (!allquestions){
+          alert("Exam expired or not yet ready");
+          window.location.replace("student.html");
+        }
+        for (i = 0; i<allquestions.length; i++){
+          var choices = ["A","B","C","D","E","F"];
+          var $newcol = $("<div class=\'col-sm-6\'></div>");
+          var $newcard = $("<div class=\"card\" style=\"padding: 5px\"></div>");
+          var $newheader = $("<div class=\"card-header\"></div>");
+          var lines = allquestions[i].Text.split("\n");
+          var len = lines.length - 1;
+          $newheader.append(lines[0]+"<br>");
+          for(j = 1; j<lines.length; j++){
+            $newheader.append(lines[j]+"<br>");
+          }
+          var $newbody = $("<div class=\"card-body\"></div>");
+          for(j = 0; j<len;j++){
+            $newbody.append("<input type=\"checkbox\" id=\"Choice"+choices[j]+"\" value=\""+i+choices[j]+"\" v-model=\"checkedChoice\">")
+            $newbody.append("<label for=\"Choice"+choices[j]+"\">"+choices[j]+ " </label>");
+          }
+          $newcard.append($newheader);
+          $newcard.append($newbody);
+          $newcol.append($newcard);
+          row.append($newcol);
+        };
+        var ans = new Vue({
+            el: '#m-choice',
+            data: {
+                checkedChoice: []
+            }
+        });
+      },
+      error: function(e){
+        console.log("nonon");
+      }
+    });
     if (elem.requestFullscreen) {
       elem.requestFullscreen();
     } else if (elem.mozRequestFullScreen) { /* Firefox */
@@ -121,28 +152,69 @@ $(document).ready(function(){
       elem.webkitRequestFullscreen();
     } else if (elem.msRequestFullscreen) { /* IE/Edge */
       elem.msRequestFullscreen();
-    }
+    };
+    $(window).on('blur resize',function(){
+      if(blurNum>3){
+        alert("Test end！");
+        $(window).off("beforeunload");
+        window.location.replace("student.html");
+      }else{
+        if (blurNum > 0){
+          alert("Warning changed web size "+blurNum+" time(s)！");
+        }
+
+      }
+      blurNum++;
+    });
+
+    $(window).on('beforeunload', function(){
+      $(this).off('blur resize');
+        return 'Exit test!';
+    });
+
+    //close window
+    function CloseWebPage(){
+     if (navigator.userAgent.indexOf("MSIE") > 0) {
+      if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
+       window.opener = null;
+       window.close();
+      } else {
+       window.open('', '_top');
+       window.top.close();
+      }
+     }
+     else if (navigator.userAgent.indexOf("Firefox") > 0) {
+      window.location.href = 'about:blank ';
+     } else {
+      window.opener = null;
+      window.open('', '_self', '');
+      window.close();
+     }
+   };
+
 }
-  function sendre(){
-    alert("Request send!");
-  }
   function sendans(){
+    var ans = [];
+    var checkedValues = $('input:checkbox:checked').map(function() {
+    return this.value;
+    }).get();
+    checkedValues.forEach(function(value){
+      ans.push(value[1]);
+    });
     if(button.style.display != "none"){
       alert("You did not start!");
     }else{
-      document.getElementById("Regrade").style.display = "block";
       $.ajax({
         type: "POST",
-        url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/answers",
+        url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/submit",
         data: JSON.stringify({
-          "TestID": 1,
-          "Answers": arr
+          "TestID": parseInt(test_id),
+          "Answers": ans
         }),
         xhrFields: {withCredentials: true},
         success: function(data,status,xhr){
           console.log("hahahaha");
 
-          //window.location.replace("student.html");
         },
         error: function(e){
           console.log("nonon");
@@ -151,57 +223,19 @@ $(document).ready(function(){
       $.ajax({
         type: "POST",
         url: "http://ec2-35-153-68-95.compute-1.amazonaws.com:9090/grade",
-        data: "1",
+        data: test_id,
         xhrFields: {withCredentials: true},
         success: function(data,status,xhr){
           alert("Your grade is : "+ xhr.responseText);
-
-          //window.location.replace("student.html");
+          document.getElementById('main-body').innerHTML = "";
+          window.location.replace("student.html");
         },
         error: function(e){
           alert("Your grade is not yet ready! ");
           console.log("nonon");
         }
       });
-      button.style.display = "block" ;
+      //window.location.replace("student.html");
     }
   }
-	$(window).on('blur resize',function(){
-		if(blurNum>3){
-			alert("Test end！");
-			$(window).off("beforeunload");
-			CloseWebPage();
-		}else{
-      if (blurNum > 0){
-        alert("Warning changed web size "+blurNum+" time(s)！");
-      }
-
-		}
-		blurNum++;
-	});
-
-	$(window).on('beforeunload', function(){
-		$(this).off('blur resize');
-	    return 'Exit test!';
-	});
-
-	//close window
-	function CloseWebPage(){
-	 if (navigator.userAgent.indexOf("MSIE") > 0) {
-	  if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
-	   window.opener = null;
-	   window.close();
-	  } else {
-	   window.open('', '_top');
-	   window.top.close();
-	  }
-	 }
-	 else if (navigator.userAgent.indexOf("Firefox") > 0) {
-	  window.location.href = 'about:blank ';
-	 } else {
-	  window.opener = null;
-	  window.open('', '_self', '');
-	  window.close();
-	 }
-	}
 </script>
