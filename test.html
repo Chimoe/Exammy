@@ -214,11 +214,6 @@ $(document).ready(function(){
         xhrFields: {withCredentials: true},
         success: function(data,status,xhr){
           console.log("hahahaha");
-          var start = new Date().getTime();
-          for (var i = 0; i < 1e7; i++) {
-            if ((new Date().getTime() - start) > 2000){
-              break;
-            };
         },
         error: function(e){
           console.log("nonon");
